@@ -48,7 +48,6 @@ with col3:
 with col4:
     st.metric("Python Required", f"{python_jobs:,}")
 
-# Space after KPI section
 st.write("")
 
 # =============================
@@ -90,9 +89,6 @@ with col2:
         x="Experience Level",
         y="Average Salary"
     )
-
-# Space between sections
-st.write("")
 
 st.write("")
 
@@ -138,9 +134,6 @@ with col2:
         y="Occurrences"
     )
 
-# Space between sections
-st.write("")
-
 st.write("")
 
 # =============================
@@ -184,5 +177,47 @@ with col2:
     st.bar_chart(
         salary_location,
         x="City",
+        y="Average Salary"
+    )
+
+st.write("")
+
+# =============================
+# JOB TYPE ANALYSIS
+# =============================
+
+st.subheader("Job Type Analysis")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("**Job Type Distribution**")
+
+    job_type_data = (
+        df["Job_Type"]
+        .value_counts()
+        .rename_axis("Job Type")
+        .reset_index(name="Job Listings")
+    )
+
+    st.bar_chart(
+        job_type_data,
+        x="Job Type",
+        y="Job Listings"
+    )
+
+with col2:
+    st.markdown("**Average Salary by Job Type**")
+
+    salary_job_type = (
+        df.groupby("Job_Type")["Salary_LPA"]
+        .mean()
+        .rename_axis("Job Type")
+        .reset_index(name="Average Salary")
+    )
+
+    st.bar_chart(
+        salary_job_type,
+        x="Job Type",
         y="Average Salary"
     )
