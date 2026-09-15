@@ -8,10 +8,8 @@ st.set_page_config(
     layout="wide"
 )
 
-# Load main dataset
+# Load datasets
 df = pd.read_csv("data/india_job_market_2024_2026.csv")
-
-# Load skills dataset
 skills_df = pd.read_csv("data/job_skills.csv")
 
 # Dashboard title
@@ -50,62 +48,141 @@ with col3:
 with col4:
     st.metric("Python Required", f"{python_jobs:,}")
 
-# -----------------------------
-# Job Listings by Experience
-# -----------------------------
+# Space after KPI section
+st.write("")
 
-st.subheader("Job Listings by Experience Level")
+# =============================
+# EXPERIENCE ANALYSIS
+# =============================
 
-experience_data = (
-    df["Experience_Level"]
-    .value_counts()
-    .rename_axis("Experience Level")
-    .reset_index(name="Job Listings")
-)
+st.subheader("Experience Analysis")
 
-st.bar_chart(
-    experience_data,
-    x="Experience Level",
-    y="Job Listings"
-)
+col1, col2 = st.columns(2)
 
-# -----------------------------
-# Average Salary by Experience
-# -----------------------------
+with col1:
+    st.markdown("**Job Listings by Experience Level**")
 
-st.subheader("Average Salary by Experience Level")
+    experience_data = (
+        df["Experience_Level"]
+        .value_counts()
+        .rename_axis("Experience Level")
+        .reset_index(name="Job Listings")
+    )
 
-salary_experience = (
-    df.groupby("Experience_Level")["Salary_LPA"]
-    .mean()
-)
+    st.bar_chart(
+        experience_data,
+        x="Experience Level",
+        y="Job Listings"
+    )
 
-st.bar_chart(salary_experience)
+with col2:
+    st.markdown("**Average Salary by Experience Level**")
 
-# -----------------------------
-# Top 10 Job Roles
-# -----------------------------
+    salary_experience = (
+        df.groupby("Experience_Level")["Salary_LPA"]
+        .mean()
+        .rename_axis("Experience Level")
+        .reset_index(name="Average Salary")
+    )
 
-st.subheader("Top 10 Most Common IT Job Roles")
+    st.bar_chart(
+        salary_experience,
+        x="Experience Level",
+        y="Average Salary"
+    )
 
-top_roles = (
-    df["Job_Title"]
-    .value_counts()
-    .head(10)
-)
+# Space between sections
+st.write("")
 
-st.bar_chart(top_roles)
+st.write("")
 
-# -----------------------------
-# Top 10 Technical Skills
-# -----------------------------
+# =============================
+# JOB ROLES & SKILLS
+# =============================
 
-st.subheader("Top 10 Most Frequently Required Technical Skills")
+st.subheader("Job Roles & Technical Skills")
 
-top_skills = (
-    skills_df["Skill"]
-    .value_counts()
-    .head(10)
-)
+col1, col2 = st.columns(2)
 
-st.bar_chart(top_skills)
+with col1:
+    st.markdown("**Top 10 Most Common IT Job Roles**")
+
+    top_roles = (
+        df["Job_Title"]
+        .value_counts()
+        .head(10)
+        .rename_axis("Job Role")
+        .reset_index(name="Job Listings")
+    )
+
+    st.bar_chart(
+        top_roles,
+        x="Job Role",
+        y="Job Listings"
+    )
+
+with col2:
+    st.markdown("**Top 10 Most Frequently Required Technical Skills**")
+
+    top_skills = (
+        skills_df["Skill"]
+        .value_counts()
+        .head(10)
+        .rename_axis("Skill")
+        .reset_index(name="Occurrences")
+    )
+
+    st.bar_chart(
+        top_skills,
+        x="Skill",
+        y="Occurrences"
+    )
+
+# Space between sections
+st.write("")
+
+st.write("")
+
+# =============================
+# LOCATION ANALYSIS
+# =============================
+
+st.subheader("Location Analysis")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("**Top 10 IT Job Locations**")
+
+    top_locations = (
+        df[df["City"] != "Remote"]["City"]
+        .value_counts()
+        .head(10)
+        .rename_axis("City")
+        .reset_index(name="Job Listings")
+    )
+
+    st.bar_chart(
+        top_locations,
+        x="City",
+        y="Job Listings"
+    )
+
+with col2:
+    st.markdown("**Average Salary by Job Location**")
+
+    salary_location = (
+        df[df["City"] != "Remote"]
+        .groupby("City")["Salary_LPA"]
+        .mean()
+        .sort_values(ascending=False)
+        .head(10)
+        .rename_axis("City")
+        .reset_index(name="Average Salary")
+    )
+
+    st.bar_chart(
+        salary_location,
+        x="City",
+        y="Average Salary"
+    )
