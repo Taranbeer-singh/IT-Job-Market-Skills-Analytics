@@ -8,8 +8,11 @@ st.set_page_config(
     layout="wide"
 )
 
-# Load dataset
+# Load main dataset
 df = pd.read_csv("data/india_job_market_2024_2026.csv")
+
+# Load skills dataset
+skills_df = pd.read_csv("data/job_skills.csv")
 
 # Dashboard title
 st.title("IT Job Market & Skills Analytics")
@@ -53,9 +56,18 @@ with col4:
 
 st.subheader("Job Listings by Experience Level")
 
-experience_data = df["Experience_Level"].value_counts()
+experience_data = (
+    df["Experience_Level"]
+    .value_counts()
+    .rename_axis("Experience Level")
+    .reset_index(name="Job Listings")
+)
 
-st.bar_chart(experience_data)
+st.bar_chart(
+    experience_data,
+    x="Experience Level",
+    y="Job Listings"
+)
 
 # -----------------------------
 # Average Salary by Experience
@@ -69,3 +81,31 @@ salary_experience = (
 )
 
 st.bar_chart(salary_experience)
+
+# -----------------------------
+# Top 10 Job Roles
+# -----------------------------
+
+st.subheader("Top 10 Most Common IT Job Roles")
+
+top_roles = (
+    df["Job_Title"]
+    .value_counts()
+    .head(10)
+)
+
+st.bar_chart(top_roles)
+
+# -----------------------------
+# Top 10 Technical Skills
+# -----------------------------
+
+st.subheader("Top 10 Most Frequently Required Technical Skills")
+
+top_skills = (
+    skills_df["Skill"]
+    .value_counts()
+    .head(10)
+)
+
+st.bar_chart(top_skills)
