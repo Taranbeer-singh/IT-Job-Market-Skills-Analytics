@@ -16,37 +16,121 @@ skills_df = pd.read_csv("data/job_skills.csv")
 st.title("IT Job Market & Skills Analytics")
 st.caption("India • 2024–2026")
 
-# -----------------------------
-# KPI Calculations
-# -----------------------------
+# =============================
+# SIDEBAR FILTERS
+# =============================
 
-total_jobs = len(df)
-total_openings = df["Openings"].sum()
-average_salary = df["Salary_LPA"].mean()
+st.sidebar.header("Dashboard Filters")
 
-python_jobs = df["Skills_Required"].str.contains(
+experience_options = sorted(df["Experience_Level"].dropna().unique())
+work_mode_options = sorted(df["Work_Mode"].dropna().unique())
+job_type_options = sorted(df["Job_Type"].dropna().unique())
+location_options = sorted(df["City"].dropna().unique())
+education_options = sorted(df["Education_Required"].dropna().unique())
+
+selected_experience = st.sidebar.multiselect(
+    "Experience Level",
+    experience_options,
+    default=experience_options
+)
+
+selected_work_mode = st.sidebar.multiselect(
+    "Work Mode",
+    work_mode_options,
+    default=work_mode_options
+)
+
+selected_job_type = st.sidebar.multiselect(
+    "Job Type",
+    job_type_options,
+    default=job_type_options
+)
+
+selected_location = st.sidebar.multiselect(
+    "Location",
+    location_options,
+    default=location_options
+)
+
+selected_education = st.sidebar.multiselect(
+    "Education Required",
+    education_options,
+    default=education_options
+)
+
+# =============================
+# APPLY FILTERS
+# =============================
+
+filtered_df = df[
+    df["Experience_Level"].isin(selected_experience)
+    & df["Work_Mode"].isin(selected_work_mode)
+    & df["Job_Type"].isin(selected_job_type)
+    & df["City"].isin(selected_location)
+    & df["Education_Required"].isin(selected_education)
+]
+
+# Filter skills dataset according to filtered job IDs
+filtered_job_ids = set(filtered_df["Job_ID"])
+
+filtered_skills_df = (
+    df[df["Job_ID"].isin(filtered_job_ids)]
+    .assign(
+        Skill=df[df["Job_ID"].isin(filtered_job_ids)]["Skills_Required"]
+        .str.split(", ")
+    )
+    .explode("Skill")
+)
+
+# =============================
+# KPI CALCULATIONS
+# =============================
+
+total_jobs = len(filtered_df)
+
+total_openings = filtered_df["Openings"].sum()
+
+average_salary = (
+    filtered_df["Salary_LPA"].mean()
+    if not filtered_df.empty
+    else 0
+)
+
+python_jobs = filtered_df["Skills_Required"].str.contains(
     "Python",
     case=False,
     na=False
 ).sum()
 
-# -----------------------------
-# KPI Cards
-# -----------------------------
+# =============================
+# KPI CARDS
+# =============================
 
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    st.metric("Total Job Listings", f"{total_jobs:,}")
+    st.metric(
+        "Total Job Listings",
+        f"{total_jobs:,}"
+    )
 
 with col2:
-    st.metric("Total Job Openings", f"{total_openings:,}")
+    st.metric(
+        "Total Job Openings",
+        f"{total_openings:,}"
+    )
 
 with col3:
-    st.metric("Average Salary", f"{average_salary:.2f} LPA")
+    st.metric(
+        "Average Salary",
+        f"{average_salary:.2f} LPA"
+    )
 
 with col4:
-    st.metric("Python Required", f"{python_jobs:,}")
+    st.metric(
+        "Python Required",
+        f"{python_jobs:,}"
+    )
 
 st.write("")
 
@@ -62,7 +146,7 @@ with col1:
     st.markdown("**Job Listings by Experience Level**")
 
     experience_data = (
-        df["Experience_Level"]
+        filtered_df["Experience_Level"]
         .value_counts()
         .rename_axis("Experience Level")
         .reset_index(name="Job Listings")
@@ -78,7 +162,7 @@ with col2:
     st.markdown("**Average Salary by Experience Level**")
 
     salary_experience = (
-        df.groupby("Experience_Level")["Salary_LPA"]
+        filtered_df.groupby("Experience_Level")["Salary_LPA"]
         .mean()
         .rename_axis("Experience Level")
         .reset_index(name="Average Salary")
@@ -104,7 +188,7 @@ with col1:
     st.markdown("**Top 10 Most Common IT Job Roles**")
 
     top_roles = (
-        df["Job_Title"]
+        filtered_df["Job_Title"]
         .value_counts()
         .head(10)
         .rename_axis("Job Role")
@@ -121,7 +205,7 @@ with col2:
     st.markdown("**Top 10 Most Frequently Required Technical Skills**")
 
     top_skills = (
-        skills_df["Skill"]
+        filtered_skills_df["Skill"]
         .value_counts()
         .head(10)
         .rename_axis("Skill")
@@ -148,7 +232,7 @@ with col1:
     st.markdown("**Top 10 IT Job Locations**")
 
     top_locations = (
-        df[df["City"] != "Remote"]["City"]
+        filtered_df[filtered_df["City"] != "Remote"]["City"]
         .value_counts()
         .head(10)
         .rename_axis("City")
@@ -165,7 +249,7 @@ with col2:
     st.markdown("**Average Salary by Job Location**")
 
     salary_location = (
-        df[df["City"] != "Remote"]
+        filtered_df[filtered_df["City"] != "Remote"]
         .groupby("City")["Salary_LPA"]
         .mean()
         .sort_values(ascending=False)
@@ -194,7 +278,7 @@ with col1:
     st.markdown("**Job Type Distribution**")
 
     job_type_data = (
-        df["Job_Type"]
+        filtered_df["Job_Type"]
         .value_counts()
         .rename_axis("Job Type")
         .reset_index(name="Job Listings")
@@ -210,7 +294,7 @@ with col2:
     st.markdown("**Average Salary by Job Type**")
 
     salary_job_type = (
-        df.groupby("Job_Type")["Salary_LPA"]
+        filtered_df.groupby("Job_Type")["Salary_LPA"]
         .mean()
         .rename_axis("Job Type")
         .reset_index(name="Average Salary")
