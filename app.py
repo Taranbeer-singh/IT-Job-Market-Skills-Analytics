@@ -15,17 +15,24 @@ df = pd.read_csv("data/india_job_market_2024_2026.csv")
 st.title("IT Job Market & Skills Analytics")
 st.caption("India • 2024–2026")
 
-# KPI calculations
+# -----------------------------
+# KPI Calculations
+# -----------------------------
+
 total_jobs = len(df)
 total_openings = df["Openings"].sum()
 average_salary = df["Salary_LPA"].mean()
+
 python_jobs = df["Skills_Required"].str.contains(
     "Python",
     case=False,
     na=False
 ).sum()
 
-# KPI cards
+# -----------------------------
+# KPI Cards
+# -----------------------------
+
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
@@ -39,3 +46,26 @@ with col3:
 
 with col4:
     st.metric("Python Required", f"{python_jobs:,}")
+
+# -----------------------------
+# Job Listings by Experience
+# -----------------------------
+
+st.subheader("Job Listings by Experience Level")
+
+experience_data = df["Experience_Level"].value_counts()
+
+st.bar_chart(experience_data)
+
+# -----------------------------
+# Average Salary by Experience
+# -----------------------------
+
+st.subheader("Average Salary by Experience Level")
+
+salary_experience = (
+    df.groupby("Experience_Level")["Salary_LPA"]
+    .mean()
+)
+
+st.bar_chart(salary_experience)
