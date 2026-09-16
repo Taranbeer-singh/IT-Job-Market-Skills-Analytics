@@ -191,19 +191,19 @@ with col1:
     )
 
 with col2:
-    st.markdown("**Average Salary by Experience Level**")
+    st.markdown("**Average Salary by Experience (LPA)**")
 
     salary_experience = (
         filtered_df.groupby("Experience_Level")["Salary_LPA"]
         .mean()
         .rename_axis("Experience Level")
-        .reset_index(name="Average Salary")
+        .reset_index(name="Average Salary (LPA)")
     )
 
     st.bar_chart(
         salary_experience,
         x="Experience Level",
-        y="Average Salary"
+        y="Average Salary (LPA)"
     )
 
 st.write("")
@@ -280,7 +280,7 @@ with col1:
     )
 
 with col2:
-    st.markdown("**Average Salary by Job Location**")
+    st.markdown("**Average Salary by Location (LPA)**")
 
     salary_location = (
         filtered_df[filtered_df["City"] != "Remote"]
@@ -289,13 +289,13 @@ with col2:
         .sort_values(ascending=False)
         .head(10)
         .rename_axis("City")
-        .reset_index(name="Average Salary")
+        .reset_index(name="Average Salary (LPA)")
     )
 
     st.bar_chart(
         salary_location,
         x="City",
-        y="Average Salary"
+        y="Average Salary (LPA)"
     )
 
 st.write("")
@@ -326,17 +326,17 @@ with col1:
     )
 
 with col2:
-    st.markdown("**Average Salary by Job Type**")
+    st.markdown("**Average Salary by Job Type (LPA)**")
 
     salary_job_type = (
         filtered_df.groupby("Job_Type")["Salary_LPA"]
         .mean()
         .rename_axis("Job Type")
-        .reset_index(name="Average Salary")
+        .reset_index(name="Average Salary (LPA)")
     )
 
     st.bar_chart(
         salary_job_type,
         x="Job Type",
-        y="Average Salary"
+        y="Average Salary (LPA)"
     )
