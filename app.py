@@ -100,6 +100,17 @@ filtered_df = df[
 ]
 
 # =============================
+# EMPTY FILTER HANDLING
+# =============================
+
+if filtered_df.empty:
+    st.warning(
+        "No jobs match the selected filters. "
+        "Please select at least one option."
+    )
+    st.stop()
+
+# =============================
 # FILTERED SKILLS DATA
 # =============================
 
@@ -122,11 +133,7 @@ total_jobs = len(filtered_df)
 
 total_openings = filtered_df["Openings"].sum()
 
-average_salary = (
-    filtered_df["Salary_LPA"].mean()
-    if not filtered_df.empty
-    else 0
-)
+average_salary = filtered_df["Salary_LPA"].mean()
 
 python_jobs = filtered_df["Skills_Required"].str.contains(
     "Python",
