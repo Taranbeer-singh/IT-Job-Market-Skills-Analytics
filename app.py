@@ -1,32 +1,58 @@
 import streamlit as st
 import pandas as pd
 
-# Page configuration
+# =============================
+# PAGE CONFIGURATION
+# =============================
+
 st.set_page_config(
     page_title="IT Job Market & Skills Analytics",
     page_icon="💼",
     layout="wide"
 )
 
-# Load datasets
+# =============================
+# LOAD DATASETS
+# =============================
+
 df = pd.read_csv("data/india_job_market_2024_2026.csv")
 skills_df = pd.read_csv("data/job_skills.csv")
 
-# Dashboard title
-st.title("IT Job Market & Skills Analytics")
+# =============================
+# DASHBOARD HEADER
+# =============================
+
+st.title("💼 IT Job Market & Skills Analytics")
 st.caption("India • 2024–2026")
+
+st.write("")
 
 # =============================
 # SIDEBAR FILTERS
 # =============================
 
-st.sidebar.header("Dashboard Filters")
+st.sidebar.title("🎛️ Dashboard Filters")
+st.sidebar.caption("Select one or more options")
 
-experience_options = sorted(df["Experience_Level"].dropna().unique())
-work_mode_options = sorted(df["Work_Mode"].dropna().unique())
-job_type_options = sorted(df["Job_Type"].dropna().unique())
-location_options = sorted(df["City"].dropna().unique())
-education_options = sorted(df["Education_Required"].dropna().unique())
+experience_options = sorted(
+    df["Experience_Level"].dropna().unique()
+)
+
+work_mode_options = sorted(
+    df["Work_Mode"].dropna().unique()
+)
+
+job_type_options = sorted(
+    df["Job_Type"].dropna().unique()
+)
+
+location_options = sorted(
+    df["City"].dropna().unique()
+)
+
+education_options = sorted(
+    df["Education_Required"].dropna().unique()
+)
 
 selected_experience = st.sidebar.multiselect(
     "Experience Level",
@@ -70,7 +96,10 @@ filtered_df = df[
     & df["Education_Required"].isin(selected_education)
 ]
 
-# Filter skills dataset according to filtered job IDs
+# =============================
+# FILTERED SKILLS DATA
+# =============================
+
 filtered_job_ids = set(filtered_df["Job_ID"])
 
 filtered_skills_df = (
@@ -106,6 +135,8 @@ python_jobs = filtered_df["Skills_Required"].str.contains(
 # KPI CARDS
 # =============================
 
+st.subheader("Key Market Indicators")
+
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
@@ -132,6 +163,7 @@ with col4:
         f"{python_jobs:,}"
     )
 
+st.write("")
 st.write("")
 
 # =============================
@@ -174,6 +206,7 @@ with col2:
         y="Average Salary"
     )
 
+st.write("")
 st.write("")
 
 # =============================
@@ -218,6 +251,7 @@ with col2:
         y="Occurrences"
     )
 
+st.write("")
 st.write("")
 
 # =============================
@@ -264,6 +298,7 @@ with col2:
         y="Average Salary"
     )
 
+st.write("")
 st.write("")
 
 # =============================
