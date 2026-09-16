@@ -187,7 +187,8 @@ with col1:
     st.bar_chart(
         experience_data,
         x="Experience Level",
-        y="Job Listings"
+        y="Job Listings",
+        height=350
     )
 
 with col2:
@@ -203,7 +204,8 @@ with col2:
     st.bar_chart(
         salary_experience,
         x="Experience Level",
-        y="Average Salary (LPA)"
+        y="Average Salary (LPA)",
+        height=350
     )
 
 st.write("")
@@ -231,7 +233,8 @@ with col1:
     st.bar_chart(
         top_roles,
         x="Job Role",
-        y="Job Listings"
+        y="Job Listings",
+        height=350
     )
 
 with col2:
@@ -248,7 +251,8 @@ with col2:
     st.bar_chart(
         top_skills,
         x="Skill",
-        y="Occurrences"
+        y="Occurrences",
+        height=350
     )
 
 st.write("")
@@ -276,7 +280,8 @@ with col1:
     st.bar_chart(
         top_locations,
         x="City",
-        y="Job Listings"
+        y="Job Listings",
+        height=350
     )
 
 with col2:
@@ -295,7 +300,8 @@ with col2:
     st.bar_chart(
         salary_location,
         x="City",
-        y="Average Salary (LPA)"
+        y="Average Salary (LPA)",
+        height=350
     )
 
 st.write("")
@@ -322,7 +328,8 @@ with col1:
     st.bar_chart(
         job_type_data,
         x="Job Type",
-        y="Job Listings"
+        y="Job Listings",
+        height=350
     )
 
 with col2:
@@ -338,5 +345,6 @@ with col2:
     st.bar_chart(
         salary_job_type,
         x="Job Type",
-        y="Average Salary (LPA)"
+        y="Average Salary (LPA)",
+        height=350
     )
