@@ -18,6 +18,9 @@ st.set_page_config(
 df = pd.read_csv("data/india_job_market_2024_2026.csv")
 skills_df = pd.read_csv("data/job_skills.csv")
 
+# Convert Date_Posted to datetime
+df["Date_Posted"] = pd.to_datetime(df["Date_Posted"])
+
 # =============================
 # DASHBOARD HEADER
 # =============================
@@ -348,3 +351,35 @@ with col2:
         y="Average Salary (LPA)",
         height=350
     )
+
+st.write("")
+st.write("")
+
+# =============================
+# MONTHLY JOB POSTING TREND
+# =============================
+
+st.subheader("Job Posting Trend")
+
+monthly_jobs = (
+    filtered_df
+    .set_index("Date_Posted")
+    .resample("ME")
+    .size()
+    .rename("Job Listings")
+    .reset_index()
+)
+
+monthly_jobs["Month"] = (
+    monthly_jobs["Date_Posted"]
+    .dt.strftime("%b %Y")
+)
+
+st.markdown("**Monthly Job Listings (2024–2026)**")
+
+st.line_chart(
+    monthly_jobs,
+    x="Month",
+    y="Job Listings",
+    height=400
+)
